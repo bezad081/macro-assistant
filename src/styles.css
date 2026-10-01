@@ -21,3 +21,39 @@
 @media(max-width:1180px){.workspace{grid-template-columns:minmax(0,1fr) 285px}.metrics-grid{grid-template-columns:repeat(2,1fr)}.chart-grid{grid-template-columns:1fr}}
 @media(max-width:900px){.sidebar{transform:translateX(-105%);transition:.22s}.sidebar.open{transform:translateX(0)}html[dir=rtl] .sidebar{transform:translateX(105%)}html[dir=rtl] .sidebar.open{transform:translateX(0)}.main-area{margin-inline-start:0;width:100%}.mobile-menu{display:block}.workspace{grid-template-columns:1fr}.controls-column{position:static;max-height:none;order:-1;display:grid;grid-template-columns:1fr 1fr}.scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40}.sidebar{z-index:50}}
 @media(max-width:640px){.topbar{padding:12px}.top-title p{display:none}.top-title h1{font-size:14px}.workspace{padding:12px}.metrics-grid{grid-template-columns:1fr 1fr;gap:8px}.metric-card{min-height:78px}.metric-card strong{font-size:17px}.controls-column{grid-template-columns:1fr}.tabs button{padding:9px 8px;font-size:10px}.chart-grid{gap:10px}.classroom-card p{font-size:10px}}
+
+/* Analytical solution — real LaTeX rendering */
+.math-solution { overflow: hidden; }
+.math-intro { color: var(--muted); margin-bottom: 18px; }
+.math-sections { display: grid; gap: 16px; }
+.math-section {
+  border: 1px solid rgba(148,163,184,.16);
+  background: rgba(2,6,23,.26);
+  border-radius: 14px;
+  padding: 16px 18px;
+  animation: mathIn .22s ease-out;
+}
+.math-section h3 { margin: 0 0 10px; font-size: 1rem; }
+.math-equation {
+  direction: ltr;
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px;
+  scrollbar-width: thin;
+}
+.math-equation .katex-display { margin: .55em 0; }
+.math-equation .katex { font-size: 1.18em; color: #eaf4ff; }
+.math-note {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-inline-start: 3px solid #38bdf8;
+  background: rgba(56,189,248,.07);
+  border-radius: 8px;
+  color: var(--muted);
+}
+@keyframes mathIn { from { opacity: .55; transform: translateY(2px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 700px) {
+  .math-section { padding: 13px 10px; }
+  .math-equation .katex { font-size: 1.02em; }
+}

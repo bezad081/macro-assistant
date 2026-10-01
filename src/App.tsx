@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
+import { BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import { CHAPTERS, chapterById, type Lang, type ModelState, type ParamSpec } from './data/registry';
 import { buildModelView } from './economics/presenters';
+import { buildMathView } from './economics/mathView';
 
 type Tab = 'chart' | 'analysis' | 'solution' | 'data';
 
@@ -72,6 +75,7 @@ function App() {
 
   const chapter=chapterById(activeId);
   const view=useMemo(()=>buildModelView(activeId,current[activeId],baseline[activeId],lang),[activeId,current,baseline,lang]);
+  const mathView=useMemo(()=>buildMathView(activeId,current[activeId],lang),[activeId,current,lang]);
   const fa=lang==='fa';
 
   useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dir=fa?'rtl':'ltr';localStorage.setItem('macro-lang',lang)},[lang,fa]);
@@ -136,7 +140,17 @@ function App() {
 
           {tab==='chart' && <div className={`chart-grid ${view.charts.length===1?'single':''}`}>{view.charts.map((c,i)=><ChartPanel key={i} {...c}/>)}</div>}
           {tab==='analysis' && <section className="text-card panel-card"><div className="analysis-badge">AI</div><h2>{fa?'تفسیر اقتصادی':'Economic interpretation'}</h2><p>{view.analysis}</p><div className="interpret-note">{fa?'نکته: این ابزار برای آموزش و آزمایش مدل‌ها طراحی شده و کالیبراسیون‌ها تخمین تجربی یک کشور خاص نیستند.':'Note: This is a teaching and model-experiment tool; calibrations are not empirical estimates for a specific country.'}</div></section>}
-          {tab==='solution' && <section className="text-card panel-card"><h2>{fa?'روابط و حل تحلیلی':'Equations & analytical solution'}</h2><pre className="formula-box">{view.formula}</pre><p>{fa?'پارامترهای جاری را تغییر دهید تا تعادل و نمودارها به‌صورت همزمان به‌روزرسانی شوند.':'Change the current parameters to update the equilibrium and charts simultaneously.'}</p></section>}
+          {tab==='solution' && <section className="text-card panel-card math-solution">
+            <h2>{fa?'روابط و حل تحلیلی':'Equations & analytical solution'}</h2>
+            <p className="math-intro">{fa?'فرمول‌ها با مقادیر جاری مدل محاسبه می‌شوند؛ با تغییر هر پارامتر، جایگذاری عددی و نتیجه نیز فوراً به‌روزرسانی می‌شود.':'Equations use the current model values; changing any parameter immediately updates the numerical substitution and result.'}</p>
+            <div className="math-sections">
+              {mathView.map((section,si)=><div className="math-section" key={`${activeId}-${si}-${JSON.stringify(current[activeId])}`}>
+                <h3>{section.title}</h3>
+                {section.equations.map((eq,ei)=><div className="math-equation" key={ei}><BlockMath math={eq}/></div>)}
+                {section.note&&<p className="math-note">{section.note}</p>}
+              </div>)}
+            </div>
+          </section>}
           {tab==='data' && <section className="table-card panel-card"><div className="table-wrap"><table><thead><tr>{view.table.columns.map((c,i)=><th key={i}>{c}</th>)}</tr></thead><tbody>{view.table.rows.map((r,i)=><tr key={i}>{r.map((v,j)=><td key={j}>{typeof v==='number'?(Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:5}):'—'):v}</td>)}</tr>)}</tbody></table></div></section>}
         </section>
 
